@@ -1,0 +1,20 @@
+# systemd unit for the Voyage AI API. Installed by scripts/deploy.sh.
+# Secrets (ANTHROPIC_API_KEY) live in /etc/voyage-ai/backend.env, root-only.
+[Unit]
+Description=Voyage AI API
+After=network.target
+
+[Service]
+User=voyage
+WorkingDirectory=/opt/voyage-ai/backend
+Environment=NODE_ENV=production
+Environment=HOST=127.0.0.1
+Environment=PORT=4000
+Environment=ALLOWED_ORIGINS=https://voyage.amitmarathe.com
+EnvironmentFile=/etc/voyage-ai/backend.env
+ExecStart=/usr/bin/node dist/server.js
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

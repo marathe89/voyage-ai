@@ -17,7 +17,9 @@ interface EditableActivity {
 interface EditableDay { label: string; activities: EditableActivity[]; }
 interface CustomItinerary { title: string; destination: string; note?: string; days: EditableDay[]; }
 
-const apiUrl = import.meta.env.VITE_API_URL ?? "http://localhost:4000";
+// Production is served by nginx with /api proxied to the backend, so the
+// API lives on the same origin; local dev talks to the backend on :4000.
+const apiUrl = import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? "http://localhost:4000" : "");
 
 // ---------------------------------------------------------------------------
 // Live AI mode — talks to the real Claude-powered backend (backend/src/lib/

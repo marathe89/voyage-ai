@@ -6,8 +6,18 @@ import type { ConversationMessage, TravelerPersona, Trip } from "./types/convers
 
 const app = express();
 const port = Number(process.env.PORT ?? 4000);
+// Production binds to 127.0.0.1 behind nginx; locally it listens everywhere.
+const host = process.env.HOST ?? "0.0.0.0";
 
-app.use(cors());
+// Only these sites may call the API from a browser. The Claude-backed
+// endpoint spends real API credits, so it must not be open to every origin.
+// Override with a comma-separated ALLOWED_ORIGINS env var.
+const allowedOrigins = (process.env.ALLOWED_ORIGINS ?? "http://localhost:5173,https://voyage.amitmarathe.com")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
 
 app.get("/api/health", (_request, response) => {
@@ -64,6 +74,6 @@ app.post("/api/concierge/converse", async (request, response) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Voyage AI API listening on http://localhost:${port}`);
+app.listen(port, host, () => {
+  console.log(`Voyage AI API listening on http://${host}:${port}`);
 });

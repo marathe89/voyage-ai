@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 
-const apiUrl = import.meta.env.VITE_API_URL ?? "http://localhost:4000";
+// Production is served by nginx with /api proxied to the backend, so the
+// API lives on the same origin; local dev talks to the backend on :4000.
+const apiUrl = import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? "http://localhost:4000" : "");
 
 interface ShellState {
   tripInput: string;
